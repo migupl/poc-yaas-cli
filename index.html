@@ -25,6 +25,17 @@
         <div id="error" style="display: none; color: red">Some wrong!!! Sorry, try again</div>
     </div>
 
+    <template id="anagrams-response-tpl">
+        <style>
+        </style>
+        <div class="wrapper">
+            <span class="length"></span>
+            <span class="anagrams"></span>
+        </div>
+    </template>
+
+    <div id="anagrams-response"></div>
+
     <script type="application/javascript">
         const HttpCodes = {
             SUCCESS : 200,
@@ -32,8 +43,15 @@
         };
 
         function searchForAnagrams(form) {
-            var error = document.getElementById("error");
+            const error = document.querySelector("#error");
             error.style.display = "none";
+
+            const elAnagramsresponse = document.querySelector('#anagrams-response');
+            var child = elAnagramsresponse.lastElementChild;
+            while (child) {
+                elAnagramsresponse.removeChild(child);
+                child = elAnagramsresponse.lastElementChild;
+            }
 
             const searchText = encodeURIComponent(form.text.value);
             if (searchText) {
@@ -43,8 +61,16 @@
                 xhttp.onreadystatechange = function() {
                     if (this.readyState === 4) {
                         if (this.status === HttpCodes.SUCCESS) {
-                            const jsonResponse = JSON.parse(this.responseText);
-                            console.log(jsonResponse);
+
+                            const jsonArrayResponse = JSON.parse(this.responseText);
+                            jsonArrayResponse.forEach(function(anagrams) {
+                                const elAnagram = document.createElement("x-anagrams-response");
+                                elAnagram.setAttribute("length", anagrams.length);
+                                elAnagram.setAttribute("anagrams", anagrams.words);
+
+                                elAnagramsresponse.appendChild(elAnagram);
+                                elAnagram.render();
+                            })
                         }
 
                         if (this.status === HttpCodes.NOT_FOUND) {
@@ -57,8 +83,30 @@
                 xhttp.send();
             }
         }
-
         window.onload = function () {
+            customElements.define('x-anagrams-response', class extends HTMLElement {
+                constructor() {
+                    super();
+                    const template = document.querySelector('#anagrams-response-tpl');
+
+                    this.attachShadow({ mode: 'open' });
+                    this.shadowRoot.appendChild(template.content.cloneNode(true));
+
+                    this.render();
+                }
+
+                render() {
+                    // update attrs
+                    const elLength = this.shadowRoot.querySelector('.length');
+                    const elAnagrams = this.shadowRoot.querySelector('.anagrams');
+
+                    const length = this.getAttribute('length');
+                    if (length) {
+                        elLength.textContent = length;
+                        elAnagrams.textContent = this.getAttribute('anagrams').split( ",");
+                    }
+                }
+            });
         };
     </script>
 </body>
