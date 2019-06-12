@@ -17,5 +17,25 @@
         <h1>Anagrams solver</h1>
     </div>
 
+    <div id="anagrams-request">
+        <form action="http://localhost:8080/anagrams/" onsubmit="searchForAnagrams(this);return false">
+            <input type="text" name="text" placeholder="Edit me and use <Enter> to searching for Anagrams">
+        </form>
+    </div>
+
+    <script type="application/javascript">
+        function searchForAnagrams(form) {
+            console.log(form.method);
+
+            const searchText = encodeURIComponent(form.text.value);
+            if (searchText) {
+                const url = form.action + searchText;
+                alert("url: " + url);
+            }
+        }
+
+        window.onload = function () {
+        };
+    </script>
 </body>
 </html>
