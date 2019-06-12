@@ -10,6 +10,7 @@
 
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/flag-icon.css">
 </head>
 <body>
 
@@ -19,6 +20,7 @@
 
     <div id="anagrams-request">
         <form action="http://localhost:8080/anagrams/" onsubmit="searchForAnagrams(this);return false">
+            <span class="flag-icon" id="language-flag" data-url="http://localhost:8080/language" alt="Dictionary Language"></span>
             <input type="text" name="text" placeholder="Edit me and use <Enter> to searching for Anagrams">
         </form>
 
@@ -47,7 +49,7 @@
             error.style.display = "none";
 
             const elAnagramsresponse = document.querySelector('#anagrams-response');
-            var child = elAnagramsresponse.lastElementChild;
+            let child = elAnagramsresponse.lastElementChild;
             while (child) {
                 elAnagramsresponse.removeChild(child);
                 child = elAnagramsresponse.lastElementChild;
@@ -57,7 +59,7 @@
             if (searchText) {
                 const url = form.action + searchText;
 
-                var xhttp = new XMLHttpRequest();
+                let xhttp = new XMLHttpRequest();
                 xhttp.onreadystatechange = function() {
                     if (this.readyState === 4) {
                         if (this.status === HttpCodes.SUCCESS) {
@@ -83,7 +85,26 @@
                 xhttp.send();
             }
         }
+
         window.onload = function () {
+            const flag = document.querySelector('#language-flag');
+            let xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState === 4) {
+                    if (this.status === HttpCodes.SUCCESS) {
+
+                        const jsonArrayResponse = JSON.parse(this.responseText);
+                        console.log(jsonArrayResponse);
+
+                        flag.classList.add("flag-icon-" + (jsonArrayResponse.language || "en"));
+                        flag.classList.add("flag-icon-squared");
+                    }
+                }
+            };
+
+            xhttp.open("GET", flag.getAttribute("data-url"), true);
+            xhttp.send();
+
             customElements.define('x-anagrams-response', class extends HTMLElement {
                 constructor() {
                     super();
