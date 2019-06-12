@@ -21,16 +21,40 @@
         <form action="http://localhost:8080/anagrams/" onsubmit="searchForAnagrams(this);return false">
             <input type="text" name="text" placeholder="Edit me and use <Enter> to searching for Anagrams">
         </form>
+
+        <div id="error" style="display: none; color: red">Some wrong!!! Sorry, try again</div>
     </div>
 
     <script type="application/javascript">
+        const HttpCodes = {
+            SUCCESS : 200,
+            NOT_FOUND : 404
+        };
+
         function searchForAnagrams(form) {
-            console.log(form.method);
+            var error = document.getElementById("error");
+            error.style.display = "none";
 
             const searchText = encodeURIComponent(form.text.value);
             if (searchText) {
                 const url = form.action + searchText;
-                alert("url: " + url);
+
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function() {
+                    if (this.readyState === 4) {
+                        if (this.status === HttpCodes.SUCCESS) {
+                            const jsonResponse = JSON.parse(this.responseText);
+                            console.log(jsonResponse);
+                        }
+
+                        if (this.status === HttpCodes.NOT_FOUND) {
+                            error.style.display = "block";
+                        }
+                    }
+                };
+
+                xhttp.open(form.method, url, true);
+                xhttp.send();
             }
         }
 
