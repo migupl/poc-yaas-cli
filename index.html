@@ -29,97 +29,20 @@
 
     <section id="anagrams-response"></section>
 
-    <template id="anagrams-tpl">
-        <style>
-            .wrapper {
-                display: grid;
-                grid-template-columns: [number] 5% [words] auto;
-                grid-column-gap: 0.5rem;
-
-                grid-auto-flow: row;
-
-                margin-top: 1em;
-
-                border-radius: 4px;
-                border: 1px solid lightgray;
-
-                position: relative;
-                overflow: hidden;
-            }
-
-            .length {
-                grid-area: number;
-                place-self: center;
-                font-size: 2em;
-
-                margin-bottom: 15%;
-            }
-
-            .anagrams-size:before {
-                content: "     x";
-            }
-
-            .anagrams-size {
-                grid-area: number;
-                justify-self: center;
-                align-self: end;
-                font-size: 0.8em;
-            }
-
-            .anagrams {
-                grid-area: words;
-                justify-self: start;
-                place-self: center stretch;
-
-                margin-left: 2%;
-            }
-
-            ul {
-                column-count: 4;
-                column-rule: dotted 1px #333;
-                list-style-type: none;
-            }
-
-            li {
-                text-align: center;
-            }
-        </style>
-
-        <div class="wrapper">
-            <span class="length"></span>
-            <span class="anagrams-size"></span>
-            <span class="anagrams"></span>
-        </div>
-    </template>
-
     <script src="js/http-status-enum.js" type="application/javascript"></script>
-    <script src="js/anagrams-component.js" type="application/javascript"></script>
+    <script src="js/dictionary-language.js" type="application/javascript"></script>
+
+    <script src="js/anagrams-request.js" type="application/javascript"></script>
     <script src="js/anagrams-search.js" type="application/javascript"></script>
+
+    <script src="components/loader.js" type="application/javascript"></script>
 
     <script type="application/javascript">
         window.onload = function () {
-            function setDictinaryLanguage() {
-                const flag = document.querySelector('#language-flag');
-                let xhttp = new XMLHttpRequest();
-                xhttp.onreadystatechange = function() {
-                    if (this.readyState === 4) {
-                        if (this.status === HttpCodes.SUCCESS) {
+            const elFlag = document.querySelector('#language-flag');
+            setDictinaryLanguage(elFlag);
 
-                            const jsonResponse = JSON.parse(this.responseText);
-
-                            flag.classList.add("flag-icon-" + (jsonResponse.language || "en"));
-                            flag.classList.add("flag-icon-squared");
-                        }
-                    }
-                };
-
-                const url = flag.getAttribute("data-url");
-                xhttp.open("GET", url, true);
-                xhttp.send();
-            }
-
-            setDictinaryLanguage();
-            setAnagramsComponent();
+            loadComponent('components/anagrams.wc');
         };
     </script>
 </body>
