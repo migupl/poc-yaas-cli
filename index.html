@@ -9,34 +9,90 @@
     <link rel="apple-touch-icon" href="img/scrabble.png">
 
     <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/flag-icon.css">
 </head>
 <body>
 
-    <div id="title">
-        <h1>Anagrams solver</h1>
-    </div>
+    <header id="title">
+        <h1>Solve your Anagrams Now!!!</h1>
+    </header>
 
-    <div id="anagrams-request">
+
+    <section id="anagrams-request">
         <form action="http://localhost:8080/anagrams/" onsubmit="searchForAnagrams(this);return false">
-            <span class="flag-icon" id="language-flag" data-url="http://localhost:8080/language" alt="Dictionary Language"></span>
-            <input type="text" name="text" placeholder="Edit me and use <Enter> to searching for Anagrams">
+            <label>
+                <span class="flag-icon" id="language-flag" data-url="http://localhost:8080/language"></span>
+                <input type="text" name="text" placeholder="Edit me and use <Enter> to searching for Anagrams" size="50">
+            </label>
         </form>
 
         <div id="error" style="display: none; color: red">Some wrong!!! Sorry, try again</div>
-    </div>
+    </section>
+
+    <section id="anagrams-response"></section>
+
 
     <template id="anagrams-response-tpl">
         <style>
+            .wrapper {
+                display: grid;
+                grid-template-columns: [number] 5% [words] auto;
+                grid-column-gap: 0.5rem;
+
+                grid-auto-flow: row;
+
+                margin-top: 1em;
+
+                border-radius: 4px;
+                border: 1px solid lightgray;
+
+                position: relative;
+                overflow: hidden;
+            }
+
+            .length {
+                grid-area: number;
+                place-self: center;
+                font-size: 2em;
+
+                margin-bottom: 15%;
+            }
+
+            .anagrams-size:before {
+                content: "     x";
+            }
+
+            .anagrams-size {
+                grid-area: number;
+                justify-self: center;
+                align-self: end;
+                font-size: 0.8em;
+            }
+
+            .anagrams {
+                grid-area: words;
+                justify-self: start;
+                place-self: center stretch;
+
+                margin-left: 2%;
+            }
+
+            ul {
+                column-count: 4;
+                column-rule: dotted 1px #333;
+                list-style-type: none;
+            }
+
+            li {
+                text-align: center;
+            }
         </style>
         <div class="wrapper">
             <span class="length"></span>
+            <span class="anagrams-size"></span>
             <span class="anagrams"></span>
         </div>
     </template>
-
-    <div id="anagrams-response"></div>
 
     <script type="application/javascript">
         const HttpCodes = {
@@ -68,6 +124,7 @@
                             jsonArrayResponse.forEach(function(anagrams) {
                                 const elAnagram = document.createElement("x-anagrams-response");
                                 elAnagram.setAttribute("length", anagrams.length);
+                                elAnagram.setAttribute("anagrams-size", anagrams.words.length);
                                 elAnagram.setAttribute("anagrams", anagrams.words);
 
                                 elAnagramsresponse.appendChild(elAnagram);
@@ -93,10 +150,9 @@
                 if (this.readyState === 4) {
                     if (this.status === HttpCodes.SUCCESS) {
 
-                        const jsonArrayResponse = JSON.parse(this.responseText);
-                        console.log(jsonArrayResponse);
+                        const jsonResponse = JSON.parse(this.responseText);
 
-                        flag.classList.add("flag-icon-" + (jsonArrayResponse.language || "en"));
+                        flag.classList.add("flag-icon-" + (jsonResponse.language || "en"));
                         flag.classList.add("flag-icon-squared");
                     }
                 }
@@ -119,12 +175,22 @@
                 render() {
                     // update attrs
                     const elLength = this.shadowRoot.querySelector('.length');
+                    const elSize = this.shadowRoot.querySelector('.anagrams-size');
                     const elAnagrams = this.shadowRoot.querySelector('.anagrams');
 
                     const length = this.getAttribute('length');
                     if (length) {
                         elLength.textContent = length;
-                        elAnagrams.textContent = this.getAttribute('anagrams').split( ",");
+                        elSize.textContent = this.getAttribute('anagrams-size');
+
+                        // elAnagrams.textContent = this.getAttribute('anagrams');
+                        const elList = document.createElement("ul");
+                        this.getAttribute('anagrams').split(",").forEach(function (word) {
+                            const elRow = document.createElement("li");
+                            elRow.textContent = word;
+                            elList.appendChild(elRow);
+                        })
+                        elAnagrams.appendChild(elList);
                     }
                 }
             });
