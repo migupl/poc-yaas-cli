@@ -2,8 +2,12 @@
 
 A simple client for [Anagrams Solver Server][2]
 
+Using Wordnet as dictionary at running server you can see for 'hello baby' something like
+!['hello baby' anagrams](./doc/Screenshot.png)
+
 Thanks to [Belén Albeza][2] for her inspirational '[Web Components API: esto va en serio][3]' talk 
 at BilboStack 2019 ([Examples][4]/[Slides][5]))
+
 
 ## Helpers
 
