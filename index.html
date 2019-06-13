@@ -12,11 +12,9 @@
     <link rel="stylesheet" href="css/flag-icon.css">
 </head>
 <body>
-
     <header id="title">
         <h1>Solve your Anagrams Now!!!</h1>
     </header>
-
 
     <section id="anagrams-request">
         <form action="http://localhost:8080/anagrams/" onsubmit="searchForAnagrams(this);return false">
@@ -31,8 +29,7 @@
 
     <section id="anagrams-response"></section>
 
-
-    <template id="anagrams-response-tpl">
+    <template id="anagrams-tpl">
         <style>
             .wrapper {
                 display: grid;
@@ -87,6 +84,7 @@
                 text-align: center;
             }
         </style>
+
         <div class="wrapper">
             <span class="length"></span>
             <span class="anagrams-size"></span>
@@ -94,106 +92,34 @@
         </div>
     </template>
 
+    <script src="js/http-status-enum.js" type="application/javascript"></script>
+    <script src="js/anagrams-component.js" type="application/javascript"></script>
+    <script src="js/anagrams-search.js" type="application/javascript"></script>
+
     <script type="application/javascript">
-        const HttpCodes = {
-            SUCCESS : 200,
-            NOT_FOUND : 404
-        };
-
-        function searchForAnagrams(form) {
-            const error = document.querySelector("#error");
-            error.style.display = "none";
-
-            const elAnagramsresponse = document.querySelector('#anagrams-response');
-            let child = elAnagramsresponse.lastElementChild;
-            while (child) {
-                elAnagramsresponse.removeChild(child);
-                child = elAnagramsresponse.lastElementChild;
-            }
-
-            const searchText = encodeURIComponent(form.text.value);
-            if (searchText) {
-                const url = form.action + searchText;
-
+        window.onload = function () {
+            function setDictinaryLanguage() {
+                const flag = document.querySelector('#language-flag');
                 let xhttp = new XMLHttpRequest();
                 xhttp.onreadystatechange = function() {
                     if (this.readyState === 4) {
                         if (this.status === HttpCodes.SUCCESS) {
 
-                            const jsonArrayResponse = JSON.parse(this.responseText);
-                            jsonArrayResponse.forEach(function(anagrams) {
-                                const elAnagram = document.createElement("x-anagrams-response");
-                                elAnagram.setAttribute("length", anagrams.length);
-                                elAnagram.setAttribute("anagrams-size", anagrams.words.length);
-                                elAnagram.setAttribute("anagrams", anagrams.words);
+                            const jsonResponse = JSON.parse(this.responseText);
 
-                                elAnagramsresponse.appendChild(elAnagram);
-                                elAnagram.render();
-                            })
-                        }
-
-                        if (this.status === HttpCodes.NOT_FOUND) {
-                            error.style.display = "block";
+                            flag.classList.add("flag-icon-" + (jsonResponse.language || "en"));
+                            flag.classList.add("flag-icon-squared");
                         }
                     }
                 };
 
-                xhttp.open(form.method, url, true);
+                const url = flag.getAttribute("data-url");
+                xhttp.open("GET", url, true);
                 xhttp.send();
             }
-        }
 
-        window.onload = function () {
-            const flag = document.querySelector('#language-flag');
-            let xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
-                if (this.readyState === 4) {
-                    if (this.status === HttpCodes.SUCCESS) {
-
-                        const jsonResponse = JSON.parse(this.responseText);
-
-                        flag.classList.add("flag-icon-" + (jsonResponse.language || "en"));
-                        flag.classList.add("flag-icon-squared");
-                    }
-                }
-            };
-
-            xhttp.open("GET", flag.getAttribute("data-url"), true);
-            xhttp.send();
-
-            customElements.define('x-anagrams-response', class extends HTMLElement {
-                constructor() {
-                    super();
-                    const template = document.querySelector('#anagrams-response-tpl');
-
-                    this.attachShadow({ mode: 'open' });
-                    this.shadowRoot.appendChild(template.content.cloneNode(true));
-
-                    this.render();
-                }
-
-                render() {
-                    // update attrs
-                    const elLength = this.shadowRoot.querySelector('.length');
-                    const elSize = this.shadowRoot.querySelector('.anagrams-size');
-                    const elAnagrams = this.shadowRoot.querySelector('.anagrams');
-
-                    const length = this.getAttribute('length');
-                    if (length) {
-                        elLength.textContent = length;
-                        elSize.textContent = this.getAttribute('anagrams-size');
-
-                        // elAnagrams.textContent = this.getAttribute('anagrams');
-                        const elList = document.createElement("ul");
-                        this.getAttribute('anagrams').split(",").forEach(function (word) {
-                            const elRow = document.createElement("li");
-                            elRow.textContent = word;
-                            elList.appendChild(elRow);
-                        })
-                        elAnagrams.appendChild(elList);
-                    }
-                }
-            });
+            setDictinaryLanguage();
+            setAnagramsComponent();
         };
     </script>
 </body>
