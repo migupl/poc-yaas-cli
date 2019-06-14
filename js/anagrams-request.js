@@ -1,5 +1,5 @@
 window.requestAnagrams = ( function() {
-        function requestAnagrams(url, method, elResponse) {
+        function requestAnagrams(url, method, elResponse, elError) {
             let xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function() {
                 if (this.readyState === 4) {
@@ -18,7 +18,7 @@ window.requestAnagrams = ( function() {
                     }
 
                     if (this.status === HttpCodes.NOT_FOUND) {
-                        error.style.display = "block";
+                        elError.style.display = "block";
                     }
                 }
             };

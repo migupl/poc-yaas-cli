@@ -1,6 +1,5 @@
 window.searchForAnagrams = ( function() {
-        function cleanError() {
-            const error = document.querySelector("#error");
+        function cleanError(error) {
             error.style.display = "none";
         }
 
@@ -13,7 +12,8 @@ window.searchForAnagrams = ( function() {
         }
 
         function searchForAnagrams(form) {
-            cleanError();
+            const elError = document.querySelector("#error");
+            cleanError(elError);
 
             const elAnagramResponse = document.querySelector('#anagrams-response');
             removeAnagramList(elAnagramResponse);
@@ -22,7 +22,7 @@ window.searchForAnagrams = ( function() {
             if (searchText) {
                 const url = form.action + searchText;
 
-                requestAnagrams(url, form.method, elAnagramResponse)
+                requestAnagrams(url, form.method, elAnagramResponse, elError)
             }
         }
 
