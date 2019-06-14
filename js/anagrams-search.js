@@ -22,7 +22,8 @@ window.searchForAnagrams = ( function() {
             if (searchText) {
                 const url = form.action + searchText;
 
-                requestAnagrams(url, form.method, elAnagramResponse, elError)
+                const elSpinner = document.querySelector("#spinner");
+                requestAnagrams(url, form.method, elAnagramResponse, elError, elSpinner)
             }
         }
 

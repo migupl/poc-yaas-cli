@@ -24,6 +24,10 @@ body {
     grid-column: data;
 }
 
-#anagrams-request, #anagrams-response {
+#anagrams-request, #spinner, #anagrams-response {
     grid-column-start: data;
+}
+
+#spinner {
+    place-self: stretch;
 }
