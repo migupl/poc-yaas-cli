@@ -1,18 +1,18 @@
 window.setDictinaryLanguage = ( function() {
         function setDictinaryLanguage(elFlag) {
             let xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
+            xhttp.onload = function() {
                 let language = "en";
-                if (this.readyState === 4) {
-                    if (this.status === HttpCodes.SUCCESS) {
+                if (this.status === HttpCodes.SUCCESS) {
 
-                        const jsonResponse = JSON.parse(this.responseText);
-                        language = jsonResponse.language || language;
-                    }
-
-                    elFlag.classList.add("flag-icon-" + language);
-                    elFlag.classList.add("flag-icon-squared");
+                    const jsonResponse = JSON.parse(this.responseText);
+                    language = jsonResponse.language || language;
                 }
+
+                elFlag.className = "";
+                elFlag.classList.add("flag-icon");
+                elFlag.classList.add("flag-icon-" + language);
+                elFlag.classList.add("flag-icon-squared");
             };
 
             const url = elFlag.getAttribute("data-url");
