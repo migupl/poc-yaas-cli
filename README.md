@@ -1,4 +1,4 @@
-# An anagrams solver simple client using [Web Components][15]
+# A simple web client using [Web Components][15] for anagrams solver
 
 A simple client for [Anagrams Solver Server][2]
 
